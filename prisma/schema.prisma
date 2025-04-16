@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model owner_verification_requests {
+  id                   Int                                 @id @default(autoincrement())
+  user_id              Int
+  restaurant_id        Int
+  business_license_url String?                             @db.Text
+  message              String?                             @db.Text
+  status               owner_verification_requests_status? @default(pending)
+  reviewed_at          DateTime?                           @db.Timestamp(0)
+  created_at           DateTime?                           @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?                           @default(now()) @db.Timestamp(0)
+  users                users                               @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "owner_verification_requests_ibfk_1")
+  restaurants          restaurants                         @relation(fields: [restaurant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "owner_verification_requests_ibfk_2")
+
+  @@index([restaurant_id], map: "restaurant_id")
+  @@index([user_id], map: "user_id")
+}
+
+/// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+model posts {
+  id            Int         @id @default(autoincrement())
+  user_id       Int
+  restaurant_id Int
+  rating        Decimal     @db.Decimal(2, 1)
+  photo_url     String      @db.Text
+  caption       String?     @db.Text
+  is_visible    Boolean?    @default(true)
+  language      String?     @default("ko") @db.VarChar(10)
+  created_at    DateTime?   @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?   @default(now()) @db.Timestamp(0)
+  users         users       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_1")
+  restaurants   restaurants @relation(fields: [restaurant_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "posts_ibfk_2")
+
+  @@index([restaurant_id], map: "restaurant_id")
+  @@index([user_id], map: "user_id")
+}
+
+model restaurants {
+  id                          Int                           @id @default(autoincrement())
+  name                        String                        @db.VarChar(255)
+  category                    String?                       @db.VarChar(100)
+  address                     String?                       @db.Text
+  city                        String?                       @db.VarChar(100)
+  country                     String?                       @db.VarChar(100)
+  latitude                    Decimal?                      @db.Decimal(9, 6)
+  longitude                   Decimal?                      @db.Decimal(9, 6)
+  phone_number                String?                       @db.VarChar(30)
+  website_url                 String?                       @db.Text
+  instagram_url               String?                       @db.Text
+  description                 String?                       @db.Text
+  is_verified                 Boolean?                      @default(false)
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at                  DateTime?                     @default(now()) @db.Timestamp(0)
+  owner_verification_requests owner_verification_requests[]
+  posts                       posts[]
+}
+
+model users {
+  id                          Int                           @id @default(autoincrement())
+  email                       String                        @unique(map: "email") @db.VarChar(255)
+  password_hash               String                        @db.VarChar(255)
+  username                    String                        @unique(map: "username") @db.VarChar(50)
+  user_type                   users_user_type?              @default(reviewer)
+  tier                        users_tier?                   @default(dbgenerated("새싹"))
+  review_count                Int?                          @default(0)
+  profile_image_url           String?                       @db.Text
+  birthplace_city             String?                       @db.VarChar(100)
+  lived_cities                String?                       @db.Text
+  current_city                String?                       @db.VarChar(100)
+  show_location_badge         Boolean?                      @default(true)
+  is_verified_owner           Boolean?                      @default(false)
+  restaurant_id               Int?
+  created_at                  DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at                  DateTime?                     @default(now()) @db.Timestamp(0)
+  owner_verification_requests owner_verification_requests[]
+  posts                       posts[]
+}
+
+enum users_user_type {
+  reviewer
+  owner
+}
+
+enum users_tier {
+  SEEDLING     @map("새싹")
+  BEGINNER     @map("초보미식가")
+  EXPLORER     @map("탐식가")
+  LOVER        @map("미식러버")
+  GOURMET      @map("식도락가")
+  SCHOLAR      @map("미식연구가")
+  PHILOSOPHER  @map("맛의 철학자")
+}
+
+enum owner_verification_requests_status {
+  pending
+  approved
+  rejected
+}
