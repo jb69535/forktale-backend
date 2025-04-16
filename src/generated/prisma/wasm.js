@@ -176,7 +176,17 @@ exports.Prisma.UsersScalarFieldEnum = {
   is_verified_owner: 'is_verified_owner',
   restaurant_id: 'restaurant_id',
   created_at: 'created_at',
-  updated_at: 'updated_at'
+  updated_at: 'updated_at',
+  password_reset_token: 'password_reset_token',
+  password_reset_token_expiration: 'password_reset_token_expiration'
+};
+
+exports.Prisma.Password_reset_tokensScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -219,7 +229,13 @@ exports.Prisma.usersOrderByRelevanceFieldEnum = {
   profile_image_url: 'profile_image_url',
   birthplace_city: 'birthplace_city',
   lived_cities: 'lived_cities',
-  current_city: 'current_city'
+  current_city: 'current_city',
+  password_reset_token: 'password_reset_token'
+};
+
+exports.Prisma.password_reset_tokensOrderByRelevanceFieldEnum = {
+  email: 'email',
+  token: 'token'
 };
 exports.owner_verification_requests_status = exports.$Enums.owner_verification_requests_status = {
   pending: 'pending',
@@ -246,7 +262,8 @@ exports.Prisma.ModelName = {
   owner_verification_requests: 'owner_verification_requests',
   posts: 'posts',
   restaurants: 'restaurants',
-  users: 'users'
+  users: 'users',
+  password_reset_tokens: 'password_reset_tokens'
 };
 
 /**

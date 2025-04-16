@@ -65,24 +65,36 @@ model restaurants {
 }
 
 model users {
-  id                          Int                           @id @default(autoincrement())
-  email                       String                        @unique(map: "email") @db.VarChar(255)
-  password_hash               String                        @db.VarChar(255)
-  username                    String                        @unique(map: "username") @db.VarChar(50)
-  user_type                   users_user_type?              @default(reviewer)
-  tier                        users_tier?                   @default(dbgenerated("새싹"))
-  review_count                Int?                          @default(0)
-  profile_image_url           String?                       @db.Text
-  birthplace_city             String?                       @db.VarChar(100)
-  lived_cities                String?                       @db.Text
-  current_city                String?                       @db.VarChar(100)
-  show_location_badge         Boolean?                      @default(true)
-  is_verified_owner           Boolean?                      @default(false)
-  restaurant_id               Int?
-  created_at                  DateTime?                     @default(now()) @db.Timestamp(0)
-  updated_at                  DateTime?                     @default(now()) @db.Timestamp(0)
-  owner_verification_requests owner_verification_requests[]
-  posts                       posts[]
+  id                              Int                           @id @default(autoincrement())
+  email                           String                        @unique(map: "email") @db.VarChar(255)
+  password_hash                   String                        @db.VarChar(255)
+  username                        String                        @unique(map: "username") @db.VarChar(50)
+  user_type                       users_user_type?              @default(reviewer)
+  tier                            users_tier?                   @default(SEEDLING)
+  review_count                    Int?                          @default(0)
+  profile_image_url               String?                       @db.Text
+  birthplace_city                 String?                       @db.VarChar(100)
+  lived_cities                    String?                       @db.Text
+  current_city                    String?                       @db.VarChar(100)
+  show_location_badge             Boolean?                      @default(true)
+  is_verified_owner               Boolean?                      @default(false)
+  restaurant_id                   Int?
+  created_at                      DateTime?                     @default(now()) @db.Timestamp(0)
+  updated_at                      DateTime?                     @default(now()) @db.Timestamp(0)
+  owner_verification_requests     owner_verification_requests[]
+  posts                           posts[]
+  password_reset_token            String?                       @db.Text
+  password_reset_token_expiration DateTime?
+}
+
+model password_reset_tokens {
+  id        Int      @id @default(autoincrement())
+  email     String   @db.VarChar(255)
+  token     String   @db.VarChar(255)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
 }
 
 enum users_user_type {
