@@ -3,12 +3,11 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
-export const getUserPosts = async (req: Request, res: Response): Promise<void> => {
+export const getUserPosts = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.id);
 
   if (isNaN(userId)) {
-    res.status(400).json({ message: 'Invalid user ID.' });
-    return;
+    return res.status(400).json({ message: 'Invalid user ID.' });
   }
 
   try {
@@ -33,3 +32,33 @@ export const getUserPosts = async (req: Request, res: Response): Promise<void> =
     res.status(500).json({ message: 'Internal server error.' });
   }
 };
+
+export const getUserProfile = async (req: Request, res: Response) => {
+    const userId = parseInt(req.params.id);
+  
+    if (isNaN(userId)) {
+      res.status(400).json({ message: 'Invalid user ID.' });
+    }
+  
+    try {
+      const user = await prisma.users.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          username: true,
+          tier: true,
+          profile_image_url: true,
+          created_at: true,
+        },
+      });
+  
+      if (!user) {
+        res.status(404).json({ message: 'User not found.' });
+      }
+  
+      res.status(200).json({ user });
+    } catch (error) {
+      console.error('Get User Profile Error:', error);
+      res.status(500).json({ message: 'Internal server error.' });
+    }
+  };

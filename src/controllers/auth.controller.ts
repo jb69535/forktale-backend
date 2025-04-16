@@ -13,8 +13,7 @@ export const signup = async (req: Request, res: Response) => { // Signup
     const { email, username, password } = req.body;
 
     if (!email || !username || !password) {
-      res.status(400).json({ message: 'All fields are required.' });
-      return;
+      return res.status(400).json({ message: 'All fields are required.' });
     }
 
     const existingUser = await prisma.users.findFirst({
@@ -24,8 +23,7 @@ export const signup = async (req: Request, res: Response) => { // Signup
     });
 
     if (existingUser) {
-      res.status(409).json({ message: 'Email or username already in use.' });
-      return;
+      return res.status(409).json({ message: 'Email or username already in use.' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -55,8 +53,7 @@ export const login = async (req: Request, res: Response) => { // Login
     const { email, password } = req.body;
 
     if (!email || !password) {
-      res.status(400).json({ message: 'Email and password are required.' });
-      return;
+      return res.status(400).json({ message: 'Email and password are required.' });
     }
 
     const user = await prisma.users.findUnique({
@@ -64,19 +61,16 @@ export const login = async (req: Request, res: Response) => { // Login
     });
 
     if (!user) {
-      res.status(401).json({ message: 'Invalid email or password.' });
-      return;
+      return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password_hash);
     if (!isMatch) {
-      res.status(401).json({ message: 'Invalid email or password.' });
-      return;
+      return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
     if (!req.body) {
-      res.status(400).json({ message: 'Missing request body' });
-      return;
+      return res.status(400).json({ message: 'Missing request body' });
     }
 
     const token = jwt.sign(

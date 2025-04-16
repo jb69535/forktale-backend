@@ -3,20 +3,18 @@
 import { Request, Response } from 'express';
 import prisma from '../config/prisma';
 
-export const createPost = async (req: Request, res: Response): Promise<void> => {
+export const createPost = async (req: Request, res: Response) => {
   try {
     const { restaurant_id, rating, photo_url, caption, language = 'ko' } = req.body;
     const user = (req as any).user;
 
     // Input validation
     if (!restaurant_id || !rating || !photo_url) {
-      res.status(400).json({ message: 'restaurant_id, rating, and photo_url are required.' });
-      return;
+      return res.status(400).json({ message: 'restaurant_id, rating, and photo_url are required.' });
     }
 
     if (rating < 0.5 || rating > 5.0) {
-      res.status(400).json({ message: 'Rating must be between 0.5 and 5.0' });
-      return;
+      return res.status(400).json({ message: 'Rating must be between 0.5 and 5.0' });
     }
 
     const post = await prisma.posts.create({
@@ -45,8 +43,7 @@ export const getPostsByRestaurant = async (req: Request, res: Response) => {
     const restaurantId = parseInt(req.params.id);
 
     if (isNaN(restaurantId)) {
-      res.status(400).json({ message: 'Invalid restaurant ID' });
-      return;
+      return res.status(400).json({ message: 'Invalid restaurant ID' });
     }
 
     const posts = await prisma.posts.findMany({
