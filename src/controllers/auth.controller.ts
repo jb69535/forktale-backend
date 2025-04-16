@@ -75,7 +75,8 @@ export const login = async (req: Request, res: Response) => { // Login
     }
 
     if (!req.body) {
-      return res.status(400).json({ message: 'Missing request body' });
+      res.status(400).json({ message: 'Missing request body' });
+      return;
     }
 
     const token = jwt.sign(

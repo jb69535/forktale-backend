@@ -45,7 +45,8 @@ export const getPostsByRestaurant = async (req: Request, res: Response) => {
     const restaurantId = parseInt(req.params.id);
 
     if (isNaN(restaurantId)) {
-      return res.status(400).json({ message: 'Invalid restaurant ID' });
+      res.status(400).json({ message: 'Invalid restaurant ID' });
+      return;
     }
 
     const posts = await prisma.posts.findMany({
